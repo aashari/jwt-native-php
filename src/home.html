@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ashari's Code - JWT Example With Native PHP</title>
+</head>
+
+<body>
+    <div>
+        <h1>JWT Example With Native PHP</h1>
+        <button onclick="logout()">Logout</button>
+        <hr>
+    </div>
+    <div>
+        <h3>Data List</h3>
+        <table id="dataHolder">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    var token = null;
+
+    $(document).ready(function() {
+        //get token from sessionStorage
+        token = sessionStorage.getItem('token');
+        if (!token) {
+            //if token is not exists then redirect to index.html
+            location.href = "index.html"
+        }
+        doGetData();
+    });
+
+    function logout() {
+        sessionStorage.removeItem('token');
+        location.href = "index.html";
+    }
+
+    function doGetData() {
+        $("#dataHolder tbody").html("");
+        $.ajax({
+            type: 'GET',
+            headers: {
+                'x-access-token': token
+            },
+            url: 'server/doGetData.php',
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.status) {
+                    for (var i = 0; i < response.payload.data.length; i++) {
+                        var curr = response.payload.data[i];
+                        $("#dataHolder tbody").append("<tr><td>" + curr.id + "</td><td>" + curr.name + "</td></tr>");
+                    }
+                    token = response.jwt.token;
+                    sessionStorage.setItem('token', token);
+                } else {
+                    alert(response.payload.message);
+                    sessionStorage.removeItem('token');
+                    location.href = "index.html";
+                }
+            }
+        });
+    }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+{
+	"jwt_secret" : "ThisIsMySecretNotYours",
+	"jwt_signing_alg" : [
+		"HS256"
+	],
+	"jwt_token_lifetime" : 3600
+}

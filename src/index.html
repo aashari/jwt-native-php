@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Ashari's Code - JWT Example With Native PHP</title>
+</head>
+
+<body>
+    <div>
+        <h1>JWT Example With Native PHP</h1>
+        <hr>
+    </div>
+    <div>
+        <h3>Login Member</h3>
+        <table>
+            <tr>
+                <td>username</td>
+                <td>:</td>
+                <td>
+                    <input type="text" id="inputTextUsername">
+                </td>
+            </tr>
+            <tr>
+                <td>password</td>
+                <td>:</td>
+                <td>
+                    <input type="password" id="inputTextPassword">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>
+                    <button onclick="doLogin()">Login</button>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td id="formMessage"></td>
+            </tr>
+        </table>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        //get token from sessionStorage
+        var token = sessionStorage.getItem('token');
+        if (token) {
+            //if token is exists then redirect to home.html
+            location.href = "home.html"
+        }
+    });
+
+    function doLogin() {
+
+        var username = $("#inputTextUsername").val();
+        var password = $("#inputTextPassword").val();
+
+        $("#formMessage").html("");
+
+        $.ajax({
+            type: "POST",
+            data: {
+                username: username,
+                password: password
+            },
+            url: 'server/doGetToken.php',
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.status) {
+                    sessionStorage.setItem('token', response.jwt.token);
+                    location.href = "home.html";
+                } else {
+                    $("#formMessage").html(response.payload.message);
+                }
+            }
+        });
+
+    }
+    </script>
+</body>
+
+</html>
